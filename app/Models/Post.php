@@ -28,29 +28,32 @@ class Post
   public static function all()
 
   {
-    return collect(File::files(resource_path("posts")))
+      return cache()->rememberForever('posts.all', function() {
+        return collect(File::files(resource_path("posts")))
 
-      ->map(function ($file) {
-        return YamlFrontMatter::parseFile($file);
-      })
-      ->map(function ($document) {
-
-
-        return new Post(
-          $document->title,
-          $document->excerpt,
-          $document->date,
-          $document->body(),
-          $document->slug
-        );
-      });
-  }
-
-  public static function find($slug)
+      ->map(fn($file) => YamlFrontMatter::parseFile($file))
+      ->map(fn($document) => new Post (
+        $document->title,
+        $document->excerpt,
+        $document->date,
+        $document->body(),
+        $document->slug
+      ))
+          ->sortByDesc('date');
+  });
+}
+public static function find($slug){
+  return static::all()->firstWhere('slug', $slug);
+}
+  public static function findorFail($slug)
   {
     //de todos los posts, encontrar el que tiene un slug que encaja con el solicitado//
 
-    return static::all() ->firstWhere('slug', $slug);
+   $post = static::find($slug);
 
+   if(! $post) {
+     throw new ModelNotFoundException();
+   }
+   return $post;
   }
 }

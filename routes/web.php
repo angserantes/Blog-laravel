@@ -1,9 +1,8 @@
 <?php
 
-use App\Models\Post;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
-use Spatie\YamlFrontMatter\YamlFrontMatter;
+use App\Models\Post;
+use League\CommonMark\Extension\FrontMatter\Data\LibYamlFrontMatterParser;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,19 +17,15 @@ use Spatie\YamlFrontMatter\YamlFrontMatter;
 
 Route::get('/', function () {
 
-
-    $posts = Post::all();
-
     return view('posts', [
-        'posts' => $posts
+        'posts' => Post::all()
 
     ]);
 });
 
 Route::get('posts/{post}', function ($slug) {
 
-    //Encontrar un post por su slug y enviarlo a un view llamado "post"
-    $post = Post::find($slug);
-
-    return view('post', ['post' => $post]);
-})->where('post', '[A-z_\-]+');
+    return view('post', [
+        'post' => Post::findOrFail($slug)
+    ]);
+});
