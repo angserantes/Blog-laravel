@@ -5,5 +5,6 @@
  use App\Models\Post;
 >>> Post::create(['title'=> 'My Fourth Post', 'excerpt' => 'excerpt of post', 'body' => 'Lorem Ipsum dolor sit amet, consectetur adipo scin elit']);
 
+Resultado del blog:
 
 ![resultado](https://i.ibb.co/xDTgrHr/2.png)
